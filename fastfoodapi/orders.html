@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<header>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</header>
+<body>
+    <div class="jumbotron text-center">
+      <h1>Real Time Notifications With Python And Postgres</h1>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div id="log" class="col-lg-12"></div>
+    </div>
+</div>
+</body>
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var connection
+    $(function () {
+        log = document.getElementById('log');
+        window.WebSocket = window.WebSocket || window.MozWebSocket;
+        connection = new WebSocket('ws://localhost:8000/order_events')
+        connection.onopen = function () {
+            connection.send(JSON.stringify({"method":"subscribe","channel": "orders" }))
+        };
+        connection.onerror = function (error) {
+        log.innerHTML = '<li class="them">an error occurred when sending-receiving data</li>' + log.innerHTML;
+        };
+        connection.onmessage = function (message) {
+        try {
+        var json = JSON.parse(message.data);
+        let d = $("<div />", {class: 'data', "css": {background: 'white',padding: '0.5em', margin: '10px 0'}})
+        let h = $("<h1 />",{css:{margin:0},text: json.message})
+        let s = $("<h3 />",{css:{margin:0},text: json.data.name})
+        let p = $("<p />", {text: "Price " +json.data.price + " quantity "+ json.data.quantity})
+        d.append(h)
+        d.append(s)
+        d.append(p)
+        d.append($("<hr />"))
+        $("#log").append(d.fadeIn())
+        } catch (e) {
+        console.log('This doesn\'t look like a valid JSON: ', message);
+        return;
+        }
+        };
+    });
+</script>
+</html>
