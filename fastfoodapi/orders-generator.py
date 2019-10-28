@@ -47,4 +47,4 @@ for num in range(1, 200):
     order.quantity = random.choice(qty)
     db.add(order)
     db.commit()
-    sleep(20)
+    sleep(5)

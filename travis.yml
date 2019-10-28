@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.6"      # current default Python on Travis CI
+virtualenv:
+  system_site_packages: false
+# command to install dependencies
+install:
+  - pip install -r dev.txt
+# command to run tests
+script:
+  - pytest
